@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "hello-user-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/helloUser/HelloUserWebPart.js",
+          "manifest": "./src/webparts/helloUser/HelloUserWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "HelloUserWebPartStrings": "lib/webparts/helloUser/loc/{locale}.js"
+  }
+}
