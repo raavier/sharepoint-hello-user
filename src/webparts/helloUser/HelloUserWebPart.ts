@@ -10,18 +10,33 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'HelloUserWebPartStrings';
 import HelloUser from './components/HelloUser';
 import { IHelloUserProps } from './components/IHelloUserProps';
+import {sp} from '@pnp/sp/presets/all'
 
 export interface IHelloUserWebPartProps {
   description: string;
 }
 
 export default class HelloUserWebPart extends BaseClientSideWebPart<IHelloUserWebPartProps> {
+  public onInit(): any {
+   
+    return super.onInit().then(() => {
 
+      // This should not be set here, but in the SampleService as the data is retrieved by the service
+      // But this is the only place where we have this.context
+
+      // Anyays this doesn't appear to be working as a separate instance of "sp" is created in the library component
+      // Refer comments in SampleLibraryLibrary.ts      
+      sp.setup({
+        spfxContext : this.context
+      });
+    });
+  } 
   public render(): void {
     const element: React.ReactElement<IHelloUserProps> = React.createElement(
       HelloUser,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        spcontext: this.context
       }
     );
 
@@ -35,7 +50,7 @@ export default class HelloUserWebPart extends BaseClientSideWebPart<IHelloUserWe
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
-
+  
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
