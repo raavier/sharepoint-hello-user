@@ -20,11 +20,13 @@
     "@pnp/logging": "^2.11.0",
     "@pnp/odata": "^2.11.0",
     "@pnp/sp": "^2.11.0",
+    "@types/styled-components": "^5.1.19",
     "axios": "^0.24.0",
     "office-ui-fabric-react": "7.174.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-json-view": "^1.21.3",
+    "styled-components": "^5.3.3",
     "swr": "^1.1.2"
   },
   "devDependencies": {
