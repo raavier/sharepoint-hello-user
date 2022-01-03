@@ -1,13 +1,7 @@
 import * as React from 'react';
-import {useState, useEffect} from 'react'
-import styles from './HelloUser.module.scss';
 import { IHelloUserProps } from './IHelloUserProps';
 import { IHelloUserState } from './IHelloUserState';
-import { escape } from '@microsoft/sp-lodash-subset';
-import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { sp } from "@pnp/sp";
-import { ConsoleListener, Logger, LogLevel } from '@pnp/logging';
-//import { getCurrentUser} from '../services/SPOps'
 import { ISiteUserInfo } from "@pnp/sp/site-users/types";
 import { ISiteGroupInfo } from "@pnp/sp/site-groups";
 export interface ICurrentUser {
@@ -18,54 +12,8 @@ export interface ICurrentUser {
   isTrainOffice?: boolean;
   isUser?: boolean;
 }
-/*
-export default function HelloUser(props:IHelloUserProps ):React.ReactElement {
-  const [user, setUser] = useState<string>();
-  
-  // Refer comments in SampleLibraryLibrary.ts      
-      
-/* 
-  const {data} = useUserFetch('/_api/web/currentuser')
-  console.log('data: ',data)
-   *//*
-  useEffect(() => {
-    (async () => {
-      let userData = await getCurrentUser()
-      console.log('teste',userData)
-      setUser(userData.siteUserInfo.LoginName)
-    })();
-  } 
-  , [])
-  /* constructor(props: IHelloUserProps){
-    super(props);
-    this._spServive = new SPOperations
-    this.state = {}
-  }; */
+import styled from 'styled-components';
 
-/*
-    return (
-     <div> 
-       <div></div>
-       {user}
-      </div> 
-    )
-  }
-*/
-
-
- 
- 
- 
-  
-//import library  
-import {  PrimaryButton, Stack,MessageBar, MessageBarType } from 'office-ui-fabric-react';  
-import { TextField, MaskedTextField } from 'office-ui-fabric-react/lib/TextField';  
- 
-import ReactJson from 'react-json-view';  
-  
-//create state  
-
-  
 var spObj = null;  
   
 export default class HelloUser extends React.Component<IHelloUserProps, IHelloUserState> {  
@@ -73,51 +21,30 @@ export default class HelloUser extends React.Component<IHelloUserProps, IHelloUs
   // constructor to intialize state and pnp sp object.  
   constructor(props: IHelloUserProps,state:IHelloUserState) {  
     super(props);  
-    this.state = {jsonResponse:null,Title:null,responseOf:""};  
+    this.state = {jsonResponse:null,Title:null,responseOf:"",firstName:"", lastName:""};  
     sp.setup({  
       spfxContext: this.props.spcontext  
     });  
-    spObj = sp;  
+    spObj = sp;
   }
-  
-
+ public async componentDidMount(){
+  let user = await sp.web.currentUser.get();  
+    let nameArray:string[] = user.Title.split(" ")
+    console.log("teste",nameArray)
+    this.setState({jsonResponse:user.Title,responseOf:"Get Current User",firstName:nameArray[0],lastName:nameArray[nameArray.length-1]});  
+ }
   
   public render(): React.ReactElement<IHelloUserProps> {  
+    ()=> this.getCurrentUser()
     return (  
-      <div className={ styles.container }>  
-        <div className={ styles.container }>  
-          <div className={ styles.row }>  
-            <div className={ styles.column }>  
-              <span className={ styles.title }>Welcome to PnP JS User Operations Demo!</span>  
-            </div>  
-          </div>  
-        </div>  
-        <br></br>  
-        <TextField value={this.state.Title} label="Enter User ID" onChange={(e)=> this.setTitle(e.target)}/>  
-        <br></br>  
-        <Stack horizontal tokens={{childrenGap:40}}>    
-                <PrimaryButton text="Get Current User" onClick={()=>this.getCurrentUser()}  />    
-                <PrimaryButton text="Get Current User Groups" onClick={()=>this.getCurrentUserGroups()} />    
-             </Stack>    
-             <br></br>  
-             <Stack horizontal tokens={{childrenGap:40}}>    
-                <PrimaryButton text="Get All Site Users" onClick={()=>this.getAllSiteUser()} />    
-                <PrimaryButton text="Get User by ID" onClick={()=>this.getUserById()} />   
-             </Stack>    
-            <br></br>  
-            <br></br>  
-        {this.state.jsonResponse &&  
-          <React.Fragment>  
-            <div>Respone from: {this.state.responseOf}</div>  
-            <br></br>  
-            <ReactJson src={this.state.jsonResponse}  collapsed={false} displayDataTypes={false} displayObjectSize={false}/>  
-            </React.Fragment>  
-        }  
-      </div>  
-    );  
-  }  
+        <Container>
+          <Image src='https://globalvale.sharepoint.com/teams/SSMA_RECFerrosos/SiteAssets/images/gifHome/teste-gif_2.gif'></Image>
+          <Span1 >Bem vindo, </Span1> 
+          <Span2 >{this.state.firstName} {this.state.lastName}</Span2>
+        </Container>
+    )
+  }
   
-  // event handler to set users input to state  
   private setTitle(element) {  
     var val = (element as HTMLInputElement).value;  
     this.setState({"Title":val});  
@@ -125,9 +52,10 @@ export default class HelloUser extends React.Component<IHelloUserProps, IHelloUs
   
   // method to get current user  
   private async getCurrentUser(){  
-    let user = await sp.web.currentUser.get();  
-    this.setState({jsonResponse:user,responseOf:"Get Current User"});  
-  }  
+    let user = await sp.web.currentUser.get(); 
+    console.log("user:",user) 
+    this.setState({jsonResponse:user.Email,responseOf:"Get Current User",firstName:user.Email});  
+  }   
   
   // method to get current user groups  
   private async getCurrentUserGroups(){  
@@ -140,8 +68,7 @@ export default class HelloUser extends React.Component<IHelloUserProps, IHelloUs
   private async getAllSiteUser(){  
     let groups = await sp.web.siteUsers();  
     this.setState({jsonResponse:groups,responseOf:"Get All site users"});  
-    console.log(groups);  
-      
+    console.log(groups);    
   }  
   
   //method to get user by id  
@@ -150,3 +77,48 @@ export default class HelloUser extends React.Component<IHelloUserProps, IHelloUs
    this.setState({jsonResponse:user,responseOf:"Get User by ID"});  
   }  
 }  
+
+const Image = styled.img`
+    position: absolute;
+    height: 100%;
+    min-width: 100%;
+    bottom: 0;
+    right: -100px;
+    z-index: 0;
+`
+const Container = styled.div`
+    position: relative;
+    width: 100%;
+    height: 200px;
+    padding: 62px 70px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+`
+const Span1 = styled.span`
+    border-radius: 4px;
+    font-size: 28px;
+    text-align: left;
+    letter-spacing: 0;
+    color: #fff;
+    padding: 1px 10px;
+    z-index: 2;
+    position: relative;
+    display: table;
+    font-family: CaeciliaLTStd-Roman;
+    background: #edb111 0 0 no-repeat padding-box;
+    margin-bottom: 3px;
+`
+
+const Span2 = styled.span`
+    border-radius: 4px;
+    font-size: 28px;
+    text-align: left;
+    letter-spacing: 0;
+    color: #fff;
+    padding: 1px 10px;
+    z-index: 2;
+    position: relative;
+    display: table;
+    font-family: CaeciliaLTStd-Roman;
+    background: #007e7a 0 0 no-repeat padding-box;
+`

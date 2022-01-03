@@ -13,6 +13,57 @@ export interface ICurrentUser {
     isTrainOffice?: boolean;
     isUser?: boolean;
   }
+  import { IHelloUserProps } from '../components/IHelloUserProps';
+import { IHelloUserState } from '../components/IHelloUserState';
+import * as React from 'react';
+var spObj = null;  
+  export default class SPOperations extends React.Component<IHelloUserProps, IHelloUserState>  {
+    
+    
+    constructor(props: IHelloUserProps,state:IHelloUserState) {  
+        super(props);  
+        this.state = {jsonResponse:null,Title:null,responseOf:"",firstName:"",lastName:""};  
+        sp.setup({  
+          spfxContext: this.props.spcontext  
+        });  
+        spObj = sp;  
+      }
+
+
+      public setTitle(element) {  
+        var val = (element as HTMLInputElement).value;  
+        this.setState({"Title":val});  
+      }  
+      
+      // method to get current user  
+      public async getCurrentUser(){  
+        let user = await sp.web.currentUser.get();  
+        this.setState({jsonResponse:user,responseOf:"Get Current User"});  
+      }  
+      
+      // method to get current user groups  
+      public async getCurrentUserGroups(){  
+        let groups = await sp.web.currentUser.groups();  
+        this.setState({jsonResponse:groups,responseOf:"Get Current User Groups"});  
+        console.log(groups);  
+      }  
+      
+      //method to get all site users  
+      public async getAllSiteUser(){  
+        let groups = await sp.web.siteUsers();  
+        this.setState({jsonResponse:groups,responseOf:"Get All site users"});  
+        console.log(groups);    
+      }  
+      
+      //method to get user by id  
+      public async getUserById (){  
+       let user = await  sp.web.getUserById(parseInt(this.state.Title)).get();  
+       this.setState({jsonResponse:user,responseOf:"Get User by ID"});  
+      }    
+  }
+
+
+
 /* 
  export const getCurrentUser = async ():Promise<ICurrentUser> => {
         try {
